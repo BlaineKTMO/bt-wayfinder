@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/blaine/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/blaine/catkin_ws/src/beginner_tutorials/include/**",
+        "/home/blaine/catkin_ws/src/BehaviorTree.CPP/include/**",
+        "/home/blaine/catkin_ws/src/camera_practice/include/**",
+        "/home/blaine/catkin_ws/src/first_bts/include/**",
+        "/home/blaine/catkin_ws/src/aasha/igvc_ws/src/igvc_simulation/hector_gazebo_plugins/include/**",
+        "/home/blaine/catkin_ws/src/aasha/igvc_ws/src/base/hoverboard-driver/include/**",
+        "/home/blaine/catkin_ws/src/aasha/igvc_ws/src/igvc_simulation/realsense-ros/realsense_gazebo_plugin/include/**",
+        "/home/blaine/catkin_ws/src/aasha/igvc_ws/src/base/wsu_ros/ros_arduino/include/**",
+        "/home/blaine/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include/**",
+        "/home/blaine/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/blaine/catkin_ws/src/aasha/igvc_ws/src/igvc_simulation/velodyne_simulator/velodyne_gazebo_plugins/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

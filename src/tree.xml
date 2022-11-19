@@ -1,0 +1,14 @@
+ <root main_tree_to_execute = "tree" >
+     <BehaviorTree ID="tree">
+        <Sequence name="root_sequence">
+           <DriveForward   name="drive_forward"/>
+           <TurnQuarter    name="turn_quarter"/>
+        </Sequence>
+    </BehaviorTree>
+    
+    <!-- the BT executor doesn't require this, but Groot does -->    
+    <TreeNodeModel>
+        <Action ID="DriveForward"/>
+        <Action ID="TurnQuarter"/> 
+    </TreeNodeModel>
+ </root>
