@@ -1,0 +1,26 @@
+ <root main_tree_to_execute = "tree" >
+     <BehaviorTree ID="tree">
+        <KeepRunningUntilFailure>
+            <Fallback name="Fallback">
+                <ReactiveSequence name="Drive Forward">
+                    <Drive/>
+                    <CheckCollision/>
+                </ReactiveSequence>
+                <RetryUntilSuccessful num_attempts="4">
+                    <Sequence name="Find New Direction">
+                        <Turn/>
+                        <CheckOpen/>
+                    </Sequence>
+                </RetryUntilSuccessful>
+            </Fallback>
+        </KeepRunningUntilFailure>
+    </BehaviorTree>
+    
+    <!-- the BT executor doesn't require this, but Groot does -->    
+    <TreeNodeModel>
+        <Action ID="Drive"/>
+        <Action ID="Turn"/>
+        <Condition ID="CheckCollision"/>
+        <Condition ID="CheckOpen"/>
+    </TreeNodeModel>
+ </root>
