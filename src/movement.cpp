@@ -45,7 +45,11 @@ bool Movement::turn() {
     nav_msgs::Odometry odom_msg;
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
     tf2::Quaternion start;
+    tf2::Quaternion end;
     tf2::Quaternion current;
+    tf2::Quaternion rotation;
+
+    rotation.setRPY(0, 0, 1.5707);
 
     int rate = 50;
     ros::Rate loop_rate(rate);
@@ -70,7 +74,8 @@ bool Movement::turn() {
         odom_msg = *odom_ptr;
 
     tf2::fromMsg(odom_msg.pose.pose.orientation, start);
-    
+    end = rotation * start;
+    end.normalize();
 
     twist_msg.angular.z = 0.5;
 
@@ -85,10 +90,13 @@ bool Movement::turn() {
             odom_msg = *odom_ptr;
 
         tf2::fromMsg(odom_msg.pose.pose.orientation, current);
+
+        // std::cout << "Shortest--------------" << std::endl
+        // << tf2::angleShortestPath(end, current) << std::endl 
+        // << "---------------" << std::endl;
         
         drivePub.publish(twist_msg);
-        loop_rate.sleep();
-    } while (abs(abs(start.getZ()) - abs(current.getZ())) < 0.25 );
+    } while (abs(tf2::angleShortestPath(current, end)) > 0.05 );
 
     // Reset /cmd_vel
     twist_msg.angular.z = 0;
