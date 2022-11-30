@@ -7,6 +7,7 @@ class Movement {
     private:
         ros::Publisher drivePub;
         ros::Subscriber scanSub;
+        ros::Subscriber tfSub;
         ros::NodeHandle &n;
      
     public:

@@ -8,7 +8,11 @@
 */
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
 #include "sensor_msgs/LaserScan.h"
+
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 #include <string>
 
@@ -37,34 +41,58 @@ bool Movement::drive() {
  * 
 */
 bool Movement::turn() {
-    geometry_msgs::Twist msg;
+    geometry_msgs::Twist twist_msg;
+    nav_msgs::Odometry odom_msg;
+    boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
+    tf2::Quaternion start;
+    tf2::Quaternion current;
+
     int rate = 50;
     ros::Rate loop_rate(rate);
 
     // Reset /cmd_vel
-    msg.linear.x = 0;
-    msg.linear.y = 0;
-    msg.linear.z = 0;
+    twist_msg.linear.x = 0;
+    twist_msg.linear.y = 0;
+    twist_msg.linear.z = 0;
 
-    msg.angular.y = 0;
-    msg.angular.z = 0;
-    msg.angular.x = 0;
+    twist_msg.angular.y = 0;
+    twist_msg.angular.z = 0;
+    twist_msg.angular.x = 0;
 
-    drivePub.publish(msg);
+    drivePub.publish(twist_msg);
 
-    msg.angular.z = 0.5;
-
-    ROS_INFO("Driving");
-
-    for(int i = 0; i < 100; i++)
+    odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
+    if (odom_ptr == NULL)
     {
-        drivePub.publish(msg);
-        loop_rate.sleep();
+        ROS_INFO("No odom data found.");
     }
+    else
+        odom_msg = *odom_ptr;
+
+    tf2::fromMsg(odom_msg.pose.pose.orientation, start);
+    
+
+    twist_msg.angular.z = 0.5;
+
+    ROS_INFO("Turning");
+
+    do
+    {
+        odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
+        if (odom_ptr == NULL)
+            ROS_INFO("No odom data found.");
+        else
+            odom_msg = *odom_ptr;
+
+        tf2::fromMsg(odom_msg.pose.pose.orientation, current);
+        
+        drivePub.publish(twist_msg);
+        loop_rate.sleep();
+    } while (abs(abs(start.getZ()) - abs(current.getZ())) < 0.25 );
 
     // Reset /cmd_vel
-    msg.angular.z = 0;
-    drivePub.publish(msg);
+    twist_msg.angular.z = 0;
+    drivePub.publish(twist_msg);
 
     return true;
 }
@@ -77,7 +105,7 @@ bool Movement::checkCollision() {
     scan_ptr = ros::topic::waitForMessage<sensor_msgs::LaserScan>("/scan", n);
 
     if (scan_ptr == NULL)
-        ROS_INFO("No laser scan found");
+        ROS_INFO("No laser scan found.");
     else
         scan = *scan_ptr;
 
