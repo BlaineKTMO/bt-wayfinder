@@ -16,7 +16,7 @@ class Movement {
         void setDrivePub(ros::Publisher drivePub);
 
         bool drive();
-        bool turn();
+        bool turn(double yaw);
         bool checkCollision();
 };
 

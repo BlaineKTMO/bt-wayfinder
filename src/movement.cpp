@@ -40,7 +40,7 @@ bool Movement::drive() {
 /**
  * 
 */
-bool Movement::turn() {
+bool Movement::turn(double yaw) {
     geometry_msgs::Twist twist_msg;
     nav_msgs::Odometry odom_msg;
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
@@ -48,22 +48,22 @@ bool Movement::turn() {
     tf2::Quaternion end;
     tf2::Quaternion current;
     tf2::Quaternion rotation;
-
-    rotation.setRPY(0, 0, 1.5707);
+    // yaw = 1.57;
+    rotation.setRPY(0, 0, yaw);
 
     int rate = 50;
     ros::Rate loop_rate(rate);
 
-    // Reset /cmd_vel
-    twist_msg.linear.x = 0;
-    twist_msg.linear.y = 0;
-    twist_msg.linear.z = 0;
+    // // Reset /cmd_vel
+    // twist_msg.linear.x = 0;
+    // twist_msg.linear.y = 0;
+    // twist_msg.linear.z = 0;
 
-    twist_msg.angular.y = 0;
-    twist_msg.angular.z = 0;
-    twist_msg.angular.x = 0;
+    // twist_msg.angular.y = 0;
+    // twist_msg.angular.z = 0;
+    // twist_msg.angular.x = 0;
 
-    drivePub.publish(twist_msg);
+    // drivePub.publish(twist_msg);
 
     odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
     if (odom_ptr == NULL)
@@ -77,7 +77,6 @@ bool Movement::turn() {
     end = rotation * start;
     end.normalize();
 
-    twist_msg.angular.z = 0.5;
 
     ROS_INFO("Turning");
 
@@ -94,9 +93,13 @@ bool Movement::turn() {
         // std::cout << "Shortest--------------" << std::endl
         // << tf2::angleShortestPath(end, current) << std::endl 
         // << "---------------" << std::endl;
-        
+        if(yaw >= 0)
+            twist_msg.angular.z = 0.5;
+        else
+            twist_msg.angular.z = -0.5;
         drivePub.publish(twist_msg);
-    } while (abs(tf2::angleShortestPath(current, end)) > 0.05 );
+
+    } while (abs(tf2::angleShortestPath(current, end)) > 0.1 );
 
     // Reset /cmd_vel
     twist_msg.angular.z = 0;

@@ -10,8 +10,6 @@
 #include "turtlebotNodes.h"
 #include "movement.h"
 
-using namespace TurtlebotNodes;
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "behavior_tree");
@@ -28,7 +26,8 @@ int main(int argc, char **argv)
     };
     
     auto turnLambda = [&move_client](BT::TreeNode& parentNode) -> BT::NodeStatus {
-        bool flag = move_client.turn();
+        double yaw = 1.5;
+        bool flag = move_client.turn(yaw);
 
         return flag ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
     };
