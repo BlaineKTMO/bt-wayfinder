@@ -1,3 +1,7 @@
+/**
+ * There is a predefined movement header in ROS/Some other package so this name is 
+ * movement_client.h
+*/
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 

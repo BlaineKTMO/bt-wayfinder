@@ -16,15 +16,13 @@
 
 #include <string>
 
-#include "movement.h"
+#include "movement_client.h"
 
 /**
- * 
+ * Start driving
 */
 bool Movement::drive() {
     geometry_msgs::Twist msg;
-    int rate = 50;
-    ros::Rate loop_rate(rate);
 
     msg.linear.x = 0.2;
     
@@ -37,24 +35,22 @@ bool Movement::drive() {
     return true;
 }
 
-/**
- * 
-*/
 bool Movement::turn(double yaw) {
+    // Vel variables
     geometry_msgs::Twist twist_msg;
-    nav_msgs::Odometry odom_msg;
 
+    // Odom variables
+    nav_msgs::Odometry odom_msg;
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
 
+    // Rotation variables
     tf2::Quaternion start;
     tf2::Quaternion end;
     tf2::Quaternion current;
     tf2::Quaternion rotation;
-    // yaw = 1.57;
+    
+    // Set the rotation quaternion
     rotation.setRPY(0, 0, yaw);
-
-    int rate = 50;
-    ros::Rate loop_rate(rate);
 
     // // Reset /cmd_vel
     // twist_msg.linear.x = 0;
@@ -67,6 +63,7 @@ bool Movement::turn(double yaw) {
 
     // drivePub.publish(twist_msg);
 
+    // Get odom information
     odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
     if (odom_ptr == NULL)
     {
@@ -75,34 +72,37 @@ bool Movement::turn(double yaw) {
     else
         odom_msg = *odom_ptr;
 
+    // Store current orientation into start
     tf2::fromMsg(odom_msg.pose.pose.orientation, start);
+
+    // Calculate ending orientation from rotation quaternion and starting orientation
     end = rotation * start;
     end.normalize();
 
-    ROS_INFO("Turning");
-
+    // Keep looping while the current and ending orientations are more than 0.1 rad apart
     do
     {
+        // Get odom information
         odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
         if (odom_ptr == NULL)
             ROS_INFO("No odom data found.");
         else
             odom_msg = *odom_ptr;
 
+        // Store current vel
         twist_msg = odom_msg.twist.twist;
 
+        // Store current orientation quaternion
         tf2::fromMsg(odom_msg.pose.pose.orientation, current);
 
-        // std::cout << "Shortest--------------" << std::endl
-        // << tf2::angleShortestPath(end, current) << std::endl 
-        // << "---------------" << std::endl;
+        // Clamp rotation speed [-0.7, 0.7]
         if (yaw > 0.7)
             yaw = 0.7;
         else if (yaw <= -0.7)
             yaw = -0.7;
-
         twist_msg.angular.z = yaw;
 
+        // Publish to /cmd_vel
         drivePub.publish(twist_msg);
 
     } while (abs(tf2::angleShortestPath(current, end)) > 0.1 );
@@ -111,16 +111,22 @@ bool Movement::turn(double yaw) {
 }
 
 bool Movement::checkCollision() {
+    // Scan variables
     sensor_msgs::LaserScan scan;
     boost::shared_ptr<sensor_msgs::LaserScan const> scan_ptr;
+
     float avgDistance = 0.;
     
+    // Get scan information
     scan_ptr = ros::topic::waitForMessage<sensor_msgs::LaserScan>("/scan", n);
-
     if (scan_ptr == NULL)
         ROS_INFO("No laser scan found.");
     else
         scan = *scan_ptr;
+
+    /**
+     * Deprecated collision detection system
+     */
 
     // for (auto it = scan.ranges.begin(); it != scan.ranges.begin() + 25; it++) 
     // {
@@ -134,10 +140,15 @@ bool Movement::checkCollision() {
 
     // avgDistance /= 50;
 
-    ROS_INFO("Checking for collision");
-
+    // Store number of kept scans
     int count = 0;
 
+    /**
+     * Collision Detection
+     * 
+     * If distance > 2, discard that information. If avg is greater than 0.5, 
+     * there is no collision.
+    */
     for(int i = 0; i < 20; i++)
     {  
         // Guard

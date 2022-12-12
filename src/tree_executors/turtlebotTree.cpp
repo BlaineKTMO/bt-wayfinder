@@ -1,3 +1,17 @@
+/**
+ * Author: Blaine Oania
+ * Filename: turtlebotTree.cpp
+ * Date: 12/5/22
+ * Package: first_bts
+ * Description:
+ *  Second attempt at creating behavior tree. Rudimentary tree that can drive,
+ *  then continously checks for objects in front. If one is detected, the robot
+ *  will turn a set degree amount then check for collision again. This will repeat
+ *  4 times until failure.
+ * 
+ *  This is using the legacy method for wrapping prewritten code in lambdas, then
+ *  dynamically creating tree nodes from the lambda. 
+*/
 #include <behaviortree_cpp_v3/bt_factory.h>
 #include <behaviortree_cpp_v3/loggers/bt_zmq_publisher.h>
 #include <behaviortree_cpp_v3/tree_node.h>

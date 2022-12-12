@@ -1,3 +1,17 @@
+/**
+ * Author: Blaine Oania
+ * Filename: turtlebotNavTree.cpp
+ * Date: 12/15/22
+ * Package: first_bts
+ * Description:
+ *  Third attempt at creating a behavior tree. This tree will take a set of 2D
+ *  coordinates as a goal and navigate to it. There is no collision avoidance
+ *  programmed. Ports are used to transfer information about heading and the goals.
+ * 
+ *  This is using the legacy method for wrapping prewritten code in lambdas, then
+ *  dynamically creating tree nodes from the lambda. Will be looking to rewrite this
+ *  with the "proper method"
+*/
 #include <behaviortree_cpp_v3/bt_factory.h>
 #include <behaviortree_cpp_v3/loggers/bt_zmq_publisher.h>
 #include <behaviortree_cpp_v3/tree_node.h>
@@ -13,6 +27,7 @@
 #include "movement.h"
 #include "navigation.h"
 
+// Method override for parsing port string into data
 namespace BT
 {
     template <>
@@ -34,7 +49,8 @@ namespace BT
 };
 
 int main(int argc, char **argv)
-{
+{   
+    // Ros initialization stuff
     ros::init(argc, argv, "behavior_tree");
     ros::NodeHandle n("~");
 
@@ -45,15 +61,25 @@ int main(int argc, char **argv)
 
     move_client.setDrivePub(drivePub);
 
+    /**
+     * Lambda definitions
+    */
+
     auto driveLambda = [&nav_client](BT::TreeNode& parent_node) -> BT::NodeStatus {
         Position2D goal; 
         geometry_msgs::Point point_goal;
+
+        // Get port information
         parent_node.getInput("goal", goal);
+        
+        // Convert to ROS data type
         point_goal.x = goal.x;
         point_goal.y = goal.y;
+        
+        // Call navigation method
         bool flag = nav_client.navDrive(point_goal);
-                std::cout << point_goal.x;
 
+        // Set return status
         return flag ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
     };
     
@@ -91,21 +117,33 @@ int main(int argc, char **argv)
         return flag ? BT::NodeStatus::SUCCESS : BT::NodeStatus::FAILURE;
     };
 
-    BT::BehaviorTreeFactory factory;
+        BT::BehaviorTreeFactory factory;
+
+    /**
+     * Defining behavior tree ports
+    */
+
     BT::PortsList goalPort = {BT::InputPort<Position2D>("goal")};
-    BT::PortsList ports = {BT::InputPort<double>("yaw")};
-    BT::PortsList outputPorts = {BT::InputPort<Position2D>("goal"), BT::OutputPort<double>("yaw"), };
+    BT::PortsList yawPort = {BT::InputPort<double>("yaw")};
+    BT::PortsList outputPorts = {BT::InputPort<Position2D>("goal"), BT::OutputPort<double>("yaw") };
+
+    /**
+     * Defining nodes from lambdas
+    */
+
     // factory.registerSimpleCondition("CheckCollision", checkCollisionLambda);
     // factory.registerSimpleCondition("CheckOpen", checkOpenLambda);
-
     factory.registerSimpleAction("navDrive", driveLambda, goalPort);
-    factory.registerSimpleAction("Turn", turnLambda, ports);
+    factory.registerSimpleAction("Turn", turnLambda, yawPort);
     factory.registerSimpleAction("findYaw", findYawLamda, outputPorts);
 
+    // Create tree
     auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/trees/turtlebotNavTree.xml");
 
+    // Tie to groot
     BT::PublisherZMQ publisher_zmq(tree);
 
+    // Execute tree
     tree.tickRootWhileRunning();
 
     return 0;
