@@ -22,6 +22,7 @@
 
 double Navigation::findYaw(geometry_msgs::Point goal) {
     nav_msgs::Odometry odom_msg;
+
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
     geometry_msgs::Point current_pos;
 
@@ -44,6 +45,12 @@ double Navigation::findYaw(geometry_msgs::Point goal) {
     // tf2::fromMsg(odom_msg.pose.pose.position, current_pos);
     current_pos.x = odom_msg.pose.pose.position.x;
     current_pos.y = odom_msg.pose.pose.position.y;
+
+    /**
+     * Need to use stampedPoses and transform to base_footprint for proper yaw calculations
+     * 
+     * dont yet know why
+    */
 
     stampedPose.header.frame_id = "odom";
     stampedPose.header.stamp = ros::Time(0);
@@ -67,7 +74,9 @@ double Navigation::findYaw(geometry_msgs::Point goal) {
 
 bool Navigation::navDrive(geometry_msgs::Point goal) {
     nav_msgs::Odometry odom_msg;
+
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
+
     geometry_msgs::Point current_pos;
     geometry_msgs::Twist vel;
     
@@ -80,7 +89,7 @@ bool Navigation::navDrive(geometry_msgs::Point goal) {
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
     geometry_msgs::TransformStamped stampedTransform;
-    
+
     odom_ptr = ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", n);
     if (odom_ptr == NULL)
         ROS_INFO("No odom data found.");
@@ -91,28 +100,32 @@ bool Navigation::navDrive(geometry_msgs::Point goal) {
     current_pos.x = odom_msg.pose.pose.position.x;
     current_pos.y = odom_msg.pose.pose.position.y;
 
-    stampedPose.header.frame_id = "odom";
-    stampedPose.header.stamp = ros::Time::now();
-    stampedPose.pose.position = current_pos;
+    /**
+     * Don't need to transform to base_footprint to get proper
+    */
 
-    stampedGoal.header.frame_id = "odom";
-    stampedGoal.header.stamp = ros::Time::now();
-    stampedGoal.pose.position = goal;
+    // stampedPose.header.frame_id = "odom";
+    // stampedPose.header.stamp = ros::Time::now();
+    // stampedPose.pose.position = current_pos;
 
-    tfBuffer.transform<geometry_msgs::PoseStamped>(stampedPose, outputStampedPose, "base_footprint", ros::Duration(3.0));
-    tfBuffer.transform<geometry_msgs::PoseStamped>(stampedGoal, outputStampedGoal, "base_footprint", ros::Duration(3.0));
+    // stampedGoal.header.frame_id = "odom";
+    // stampedGoal.header.stamp = ros::Time::now();
+    // stampedGoal.pose.position = goal;
+
+    // tfBuffer.transform<geometry_msgs::PoseStamped>(stampedPose, outputStampedPose, "base_footprint", ros::Duration(3.0));
+    // tfBuffer.transform<geometry_msgs::PoseStamped>(stampedGoal, outputStampedGoal, "base_footprint", ros::Duration(3.0));
     
     // double dx = outputStampedGoal.pose.position.x - outputStampedPose.pose.position.x;
     // double dy = outputStampedGoal.pose.position.y - outputStampedPose.pose.position.y;
 
-    double dx = current_pos.x - goal.x;
-    double dy = current_pos.y - goal.y;
+    double dx = goal.x - current_pos.x;
+    double dy = goal.y - current_pos.x;
 
     double speed = pow( (dx * dx) + (dy * dy), 0.5);
 
-    if (speed > 0.5)
-        speed = 0.5;
-    else if (speed < 0)
+    if (speed > 1)
+        speed = 1;
+    else if (speed < 0.1)
         speed = 0;
 
     vel.linear.x = speed;

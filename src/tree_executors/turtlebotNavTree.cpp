@@ -102,7 +102,7 @@ int main(int argc, char **argv)
     factory.registerSimpleAction("Turn", turnLambda, ports);
     factory.registerSimpleAction("findYaw", findYawLamda, outputPorts);
 
-    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/turtlebotNavTree.xml");
+    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/trees/turtlebotNavTree.xml");
 
     BT::PublisherZMQ publisher_zmq(tree);
 

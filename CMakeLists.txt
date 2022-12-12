@@ -119,8 +119,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
+
 )
 
 ## Declare a C++ library
@@ -143,21 +144,19 @@ include_directories(
 # target_link_libraries(DriveForward ${catkin_LIBRARIES}) 
 
 add_executable(master
-  src/master.cpp
-  src/customNodes.cpp)
+  src/tree_executors/master.cpp
+  src/nodes/customNodes.cpp)
 target_link_libraries(master ${catkin_LIBRARIES})
 
 add_executable(turtlebot_tree
-  src/turtlebotTree.cpp
-  src/turtlebotNodes.cpp
-  src/movement.cpp)
+  src/tree_executors/turtlebotTree.cpp
+  src/movement/movement.cpp)
 target_link_libraries(turtlebot_tree ${catkin_LIBRARIES})
 
 add_executable(turtlebotNav_tree
-  src/turtlebotNavTree.cpp
-  src/turtlebotNodes.cpp
-  src/movement.cpp
-  src/navigation.cpp)
+  src/tree_executors/turtlebotNavTree.cpp
+  src/movement/movement.cpp
+  src/navigation/navigation.cpp)
 target_link_libraries(turtlebotNav_tree ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix

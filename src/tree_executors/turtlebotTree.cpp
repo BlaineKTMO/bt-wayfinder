@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     factory.registerSimpleAction("Drive", driveLambda);
     factory.registerSimpleAction("Turn", turnLambda);
 
-    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/turtlebot_tree.xml");
+    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/trees/turtlebot_tree.xml");
 
     BT::PublisherZMQ publisher_zmq(tree);
 

@@ -43,7 +43,9 @@ bool Movement::drive() {
 bool Movement::turn(double yaw) {
     geometry_msgs::Twist twist_msg;
     nav_msgs::Odometry odom_msg;
+
     boost::shared_ptr<nav_msgs::Odometry const> odom_ptr;
+
     tf2::Quaternion start;
     tf2::Quaternion end;
     tf2::Quaternion current;
@@ -77,7 +79,6 @@ bool Movement::turn(double yaw) {
     end = rotation * start;
     end.normalize();
 
-
     ROS_INFO("Turning");
 
     do
@@ -88,22 +89,23 @@ bool Movement::turn(double yaw) {
         else
             odom_msg = *odom_ptr;
 
+        twist_msg = odom_msg.twist.twist;
+
         tf2::fromMsg(odom_msg.pose.pose.orientation, current);
 
         // std::cout << "Shortest--------------" << std::endl
         // << tf2::angleShortestPath(end, current) << std::endl 
         // << "---------------" << std::endl;
-        if(yaw >= 0)
-            twist_msg.angular.z = 0.5;
-        else
-            twist_msg.angular.z = -0.5;
+        if (yaw > 0.7)
+            yaw = 0.7;
+        else if (yaw <= -0.7)
+            yaw = -0.7;
+
+        twist_msg.angular.z = yaw;
+
         drivePub.publish(twist_msg);
 
     } while (abs(tf2::angleShortestPath(current, end)) > 0.1 );
-
-    // Reset /cmd_vel
-    twist_msg.angular.z = 0;
-    drivePub.publish(twist_msg);
 
     return true;
 }

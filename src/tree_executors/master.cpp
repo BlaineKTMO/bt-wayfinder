@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     velPub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
     // scanSub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000);
 
-    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/tree.xml");
+    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/trees/tree.xml");
 
     BT::PublisherZMQ publisher_zmq(tree);
 

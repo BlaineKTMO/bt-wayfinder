@@ -9,7 +9,7 @@
             </ReactiveSequence>
             <RetryUntilSuccessful num_attempts="4">
                 <Sequence>
-                    <Action ID="Turn" Yaw="1.57"/>
+                    <Action ID="Turn" yaw=""/>
                     <Condition ID="CheckOpen"/>
                 </Sequence>
             </RetryUntilSuccessful>
@@ -20,9 +20,9 @@
         <KeepRunningUntilFailure>
             <Sequence>
                 <SetBlackboard output_key="goal" value="10;10"/>
+                <Action ID="navDrive" goal="{goal}"/>
                 <Action ID="findYaw" goal="{goal}" yaw="{yaw}"/>
                 <Action ID="Turn" yaw="{yaw}"/>
-                <Action ID="navDrive" goal="{goal}"/>
             </Sequence>
         </KeepRunningUntilFailure>
     </BehaviorTree>
