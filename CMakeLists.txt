@@ -9,6 +9,7 @@ project(first_bts)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   behaviortree_cpp_v3
+  move_base_msgs
   roscpp
   rospy
   std_msgs

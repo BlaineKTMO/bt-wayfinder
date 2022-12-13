@@ -78,6 +78,12 @@ double Navigation::findYaw(geometry_msgs::Point goal) {
     // Calculate yaw
     double yaw = atan2(dy, dx);
 
+    std::cout << "stampedPose: " << stampedPose << std::endl;
+    std::cout << "outputStampedPose: " << outputStampedPose << std::endl;
+
+    std::cout << "stampedGoal: " << stampedGoal << std::endl;
+    std::cout << "outputStampedGoal: " << outputStampedGoal << std::endl;
+
     return yaw;
 }
 

@@ -18,6 +18,7 @@
 #include <behaviortree_cpp_v3/behavior_tree.h>
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include "geometry_msgs/Twist.h"
 #include "sensor_msgs/LaserScan.h"
@@ -137,8 +138,11 @@ int main(int argc, char **argv)
     factory.registerSimpleAction("Turn", turnLambda, yawPort);
     factory.registerSimpleAction("findYaw", findYawLamda, outputPorts);
 
-    // Create tree
-    auto tree = factory.createTreeFromFile("/home/blaine/catkin_ws/src/first_bts/src/trees/turtlebotNavTree.xml");
+    std::string path = ros::package::getPath("first_bts");
+    std::string file = "/src/trees/turtlebotNavTree.xml";
+    path.append(file);
+    std::cout << path << std::endl;
+    auto tree = factory.createTreeFromFile(path);
 
     // Tie to groot
     BT::PublisherZMQ publisher_zmq(tree);
