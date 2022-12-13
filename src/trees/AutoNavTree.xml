@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <SetBlackboard output_key="goal" value="2;2"/>
+            <Action ID="SendWaypoint" goal="{goal}"/>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="SendWaypoint">
+            <input_port default="{goal}" name="goal">2D coordinate goal in x;y</input_port>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

@@ -159,6 +159,12 @@ add_executable(turtlebotNav_tree
   src/navigation/navigation.cpp)
 target_link_libraries(turtlebotNav_tree ${catkin_LIBRARIES})
 
+add_executable(auto_nav_tree
+  src/tree_executors/AutoNavTree.cpp
+  src/nodes/move_base_controller.cpp
+)
+target_link_libraries(auto_nav_tree ${catkin_LIBRARIES})
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

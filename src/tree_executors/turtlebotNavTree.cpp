@@ -24,7 +24,7 @@
 #include "nav_msgs/Odometry.h"
 
 #include "turtlebotNodes.h"
-#include "movement.h"
+#include "movement_client.h"
 #include "navigation.h"
 
 // Method override for parsing port string into data

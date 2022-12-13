@@ -22,7 +22,7 @@
 #include "sensor_msgs/LaserScan.h"
 
 #include "turtlebotNodes.h"
-#include "movement.h"
+#include "movement_client.h"
 
 int main(int argc, char **argv)
 {
