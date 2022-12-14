@@ -3,7 +3,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <Sequence>
-            <SetBlackboard output_key="goal" value="2;2"/>
+            <SetBlackboard output_key="goal" value="-1;0.3"/>
             <Action ID="SendWaypoint" goal="{goal}"/>
         </Sequence>
     </BehaviorTree>

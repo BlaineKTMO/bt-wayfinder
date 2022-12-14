@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Sequence>
+            <Sequence>
+                <SetBlackboard output_key="file" value="goals.txt"/>
+                <SetBlackboard output_key="index" value="0"/>
+                <Action ID="ReadGoals" file="{file}" goals="{goals}" num_goals="{num_goals}"/>
+            </Sequence>
+            <KeepRunningUntilFailure>
+                <Sequence>
+                    <Action ID="RequestGoal" goal="{goal}" goals="{goals}" index="{index}" num_goals="{num_goals}"/>
+                    <Action ID="SendWaypoint" goal="{goal}"/>
+                    <Action ID="IncrementIndex" index="{index}" index_out="{index}"/>
+                </Sequence>
+            </KeepRunningUntilFailure>
+        </Sequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="IncrementIndex">
+            <inout_port name="index">Index of desired goal</inout_port>
+        </Action>
+        <Action ID="ReadGoals">
+            <input_port name="file">file name of goals (must be in src/goals)</input_port>
+            <output_port name="goals">List of goals with delim '-'</output_port>
+            <output_port name="num_goals">Number of goals</output_port>
+        </Action>
+        <Action ID="RequestGoal">
+            <output_port name="goal">Output goal</output_port>
+            <input_port name="goals">List of goals with delim '-'</input_port>
+            <input_port name="index">Index of desired goal</input_port>
+            <input_port name="num_goals">Number of goals</input_port>
+        </Action>
+        <Action ID="SendWaypoint">
+            <input_port name="goal"/>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

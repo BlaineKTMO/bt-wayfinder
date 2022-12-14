@@ -1,3 +1,12 @@
+/**
+ * Author: Blaine Oania
+ * Filename: move_base_controller.h
+ * Date: 12/13/22
+ * Package: first_bts
+ * Description:
+ *  Nodes for handling move_base requests.
+*/
+
 #ifndef MOVE_BASE_CONTROLLER_H
 #define MOVE_BASE_CONTROLLER_H
 
@@ -18,6 +27,8 @@ namespace MoveBaseController {
         double y;
     };
 
+    bool initialize(MoveBaseClient &mbc);
+
     class SendWaypoint : public BT::SyncActionNode
     {
         public:
@@ -31,6 +42,7 @@ namespace MoveBaseController {
         
 
     };
+
 };
 
 

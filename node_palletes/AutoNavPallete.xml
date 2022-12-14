@@ -1,0 +1,19 @@
+<root>
+    <TreeNodesModel>
+        <Action ID="ReadGoals">
+            <input_port name="file">file name of goals (must be in src/goals)</input_port>
+            <output_port name="goals">List of goals with delim '-'</output_port>
+            <output_port name="num_goals">Number of goals</output_port>
+        </Action>
+        <Action ID="RequestGoal">
+            <output_port name="goal">Output goal</output_port>
+            <input_port name="goals">List of goals with delim '-'</input_port>
+            <input_port name="index">Index of desired goal</input_port>
+            <input_port name="num_goals">Number of goals</input_port>
+        </Action>
+        <Action ID="SendWaypoint">
+            <input_port name="goal"/>
+        </Action>
+    </TreeNodesModel>
+</root>
+
