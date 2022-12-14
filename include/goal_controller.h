@@ -8,7 +8,7 @@
  *  is completely divorced from ROS, aside from handling errors and reading package
  *  directory. 
 */
-#ifndef GAOL_CONTROLLER_H
+#ifndef GOAL_CONTROLLER_H
 #define GOAL_CONTROLLER_H
 
 #include <ros/ros.h>
@@ -22,20 +22,16 @@
 
 namespace GoalController {
 
-    struct Position2D 
-    {
-        double x;
-        double y;
-    };
-
     class ReadGoals : public BT::SyncActionNode {
         public:
         ReadGoals(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
 
         static BT::PortsList providedPorts() {
-            return { BT::InputPort<std::string>("file"), 
-                    BT::OutputPort<std::string>("goals"),
-                    BT::OutputPort<double>("num_goals") };
+            return { 
+                BT::InputPort<std::string>("file"), 
+                BT::OutputPort<std::string>("goals"),
+                BT::OutputPort<double>("num_goals") 
+            };
         }
 
         BT::NodeStatus tick() override;
@@ -47,10 +43,12 @@ namespace GoalController {
         RequestGoal(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
 
         static BT::PortsList providedPorts() {
-            return { BT::InputPort<std::string>("goals"),
-                     BT::InputPort<double>("num_goals"),
-                    BT::InputPort<double>("index"),
-                    BT::OutputPort<std::string>("goal") };
+            return { 
+                BT::InputPort<std::string>("goals"),
+                BT::InputPort<double>("num_goals"),
+                BT::InputPort<double>("index"),
+                BT::OutputPort<std::string>("goal") 
+            };
         }
 
         BT::NodeStatus tick() override;
@@ -61,9 +59,10 @@ namespace GoalController {
             IncrementIndex(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
 
             static BT::PortsList providedPorts() {
-                return { BT::InputPort<double>("index"),
-                        BT::OutputPort<double>("index_out"),
-                        };
+                return { 
+                    BT::InputPort<double>("index"),
+                    BT::OutputPort<double>("index_out"),
+                };
             }
 
             BT::NodeStatus tick() override;

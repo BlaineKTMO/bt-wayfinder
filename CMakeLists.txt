@@ -170,6 +170,8 @@ add_executable(move_base_tree
   src/tree_executors/MBTree.cpp
   src/nodes/move_base_controller.cpp
   src/nodes/goal_controller.cpp
+  src/nodes/topic_controller.cpp
+  src/movement/movement.cpp
 )
 target_link_libraries(move_base_tree ${catkin_LIBRARIES})
 

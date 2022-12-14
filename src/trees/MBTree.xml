@@ -2,40 +2,70 @@
 <root main_tree_to_execute="BehaviorTree">
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
-        <Sequence>
-            <Sequence>
+        <Sequence name="Drive through goals">
+            <Sequence name="Initialize Values">
                 <SetBlackboard output_key="file" value="goals.txt"/>
                 <SetBlackboard output_key="index" value="0"/>
-                <Action ID="ReadGoals" file="{file}" goals="{goals}" num_goals="{num_goals}"/>
+                <SetBlackboard output_key="initial_pose" value="-2;-0.5"/>
             </Sequence>
-            <KeepRunningUntilFailure>
-                <Sequence>
-                    <Action ID="RequestGoal" goal="{goal}" goals="{goals}" index="{index}" num_goals="{num_goals}"/>
-                    <Action ID="SendWaypoint" goal="{goal}"/>
-                    <Action ID="IncrementIndex" index="{index}" index_out="{index}"/>
+            <Sequence name="Initialize Goals">
+                <Action ID="ReadGoals" 
+                    file="{file}" 
+                    goals="{goals}" 
+                    num_goals="{num_goals}" />
+            </Sequence>
+            <Sequence name="Initial Pose Estimate and Calibration">
+                <Action ID="PublishPoseEstimate" name="Initial Pose Estimate" 
+                    initial_pose="{initial_pose}" />
+                <Action ID="Turn" name="Calibration"/>
+            </Sequence>
+            <Fallback>
+                <KeepRunningUntilFailure name="Loop through goals">
+                    <Sequence name="Get goal and send waypoint">
+                        <Action ID="RequestGoal" name="Retrieves goal" 
+                            goal="{goal}" 
+                            goals="{goals}" 
+                            index="{index}" 
+                            num_goals="{num_goals}"/>
+                        <Action ID="SendWaypoint" name="Sends retrieved goal to move_base" 
+                            goal="{goal}" />
+                        <Action ID="IncrementIndex" name="Move on to next goal" 
+                            index="{index}" 
+                            index_out="{index}" />
+                    </Sequence>
+                </KeepRunningUntilFailure>
+                <Sequence name="Recovery Behavior">
+                    <SetBlackboard output_key="goal" value="-2;-0.5"/>
+                    <Action ID="SendWaypoint" name="Sends retrieved goal to move_base"
+                        goal="{goal}"/>
                 </Sequence>
-            </KeepRunningUntilFailure>
+            </Fallback>
         </Sequence>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
         <Action ID="IncrementIndex">
-            <inout_port name="index">Index of desired goal</inout_port>
+            <input_port name="index"/>
+            <output_port name="index_out"/>
+        </Action>
+        <Action ID="PublishPoseEstimate">
+            <input_port name="initial_pose">Initial 2D pose estimate for slam</input_port>
         </Action>
         <Action ID="ReadGoals">
-            <input_port name="file">file name of goals (must be in src/goals)</input_port>
-            <output_port name="goals">List of goals with delim '-'</output_port>
-            <output_port name="num_goals">Number of goals</output_port>
+            <input_port name="file" type="std::string"/>
+            <output_port name="goals" type="std::string"/>
+            <output_port name="num_goals" type="double"/>
         </Action>
         <Action ID="RequestGoal">
-            <output_port name="goal">Output goal</output_port>
-            <input_port name="goals">List of goals with delim '-'</input_port>
-            <input_port name="index">Index of desired goal</input_port>
-            <input_port name="num_goals">Number of goals</input_port>
+            <output_port name="goal" type="std::string"/>
+            <input_port name="goals" type="std::string"/>
+            <input_port name="index" type="double"/>
+            <input_port name="num_goals" type="double"/>
         </Action>
         <Action ID="SendWaypoint">
-            <input_port name="goal"/>
+            <input_port name="goal" type="std::string"/>
         </Action>
+        <Action ID="Turn"/>
     </TreeNodesModel>
     <!-- ////////// -->
 </root>
