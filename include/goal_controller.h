@@ -24,7 +24,8 @@ namespace GoalController {
 
     class ReadGoals : public BT::SyncActionNode {
         public:
-        ReadGoals(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
+        ReadGoals(const std::string& name, const BT::NodeConfiguration& config) 
+            : BT::SyncActionNode(name, config) {}
 
         static BT::PortsList providedPorts() {
             return { 
@@ -40,7 +41,8 @@ namespace GoalController {
 
     class RequestGoal : public BT::SyncActionNode {
         public:
-        RequestGoal(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
+        RequestGoal(const std::string& name, const BT::NodeConfiguration& config) 
+            : BT::SyncActionNode(name, config) {}
 
         static BT::PortsList providedPorts() {
             return { 
@@ -56,7 +58,8 @@ namespace GoalController {
 
     class IncrementIndex : public BT::SyncActionNode {
         public:
-            IncrementIndex(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config) {}
+            IncrementIndex(const std::string& name, const BT::NodeConfiguration& config) 
+                : BT::SyncActionNode(name, config) {}
 
             static BT::PortsList providedPorts() {
                 return { 
