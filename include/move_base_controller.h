@@ -32,7 +32,8 @@ namespace MoveBaseController {
     class SendWaypoint : public BT::SyncActionNode
     {
         public:
-            SendWaypoint(const std::string& name, const BT::NodeConfiguration& config) : BT::SyncActionNode(name, config)  {}
+            SendWaypoint(const std::string& name, const BT::NodeConfiguration& config) 
+                : BT::SyncActionNode(name, config)  {}
            
             static BT::PortsList providedPorts() {
                 return { BT::InputPort<std::string>("goal") };
